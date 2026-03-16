@@ -23,6 +23,7 @@ interface FormErrors { [key: string]: string; }
 const Notifications = () => {
   const { data: notifications = [], isLoading, isError, refetch } = useNotifications();
   const createNotification = useCreateNotification();
+  const { toast } = useToast();
   const [filter, setFilter] = useState<FilterType>('All');
   const [modalOpen, setModalOpen] = useState(false);
   const [formData, setFormData] = useState({ target: 'All Users', title: '', message: '' });

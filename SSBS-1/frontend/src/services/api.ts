@@ -263,7 +263,12 @@ export async function cancelReservation(reservationId: string, _userId?: string)
 }
 
 export async function getNotifications(): Promise<Notification[]> {
-  return []
+  try {
+    const { data } = await api.get<Notification[]>(API_ENDPOINTS.notifications.list)
+    return data
+  } catch {
+    return []
+  }
 }
 
 export function isUnauthorizedError(error: unknown): boolean {

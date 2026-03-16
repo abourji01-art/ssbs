@@ -61,6 +61,12 @@ export const API_ENDPOINTS = {
     list: `${BASE}/reports/`,
     detail: (id: number | string) => `${BASE}/reports/${id}/`,
   },
+
+  // ── Notifications ──
+  notifications: {
+    list: `${BASE}/notifications/`,
+    detail: (id: number | string) => `${BASE}/notifications/${id}/`,
+  },
 } as const;
 
 // ── Storage keys ──

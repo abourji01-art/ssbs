@@ -99,15 +99,14 @@ const BusManagement = () => {
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 marginBottom: 4, fontSize: 11, color: V.dim,
               }}>
-                <span>0 / {bus.seat_capacity} {t('dashboard.admin.seats', 'seats')}</span>
-                <span>0%</span>
+                <span>{bus.seat_capacity} {t('dashboard.admin.seats', 'seats')}</span>
               </div>
               <div style={{
                 width: '100%', height: 6, borderRadius: 3,
                 background: V.barTrack, overflow: 'hidden',
               }}>
                 <div style={{
-                  width: '0%', height: '100%', borderRadius: 3,
+                  width: '100%', height: '100%', borderRadius: 3,
                   background: V.green, transition: 'width 0.3s',
                 }} />
               </div>
