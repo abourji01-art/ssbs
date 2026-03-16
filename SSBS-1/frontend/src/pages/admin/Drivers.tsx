@@ -130,6 +130,13 @@ export default function Drivers() {
     },
   })
 
+  const [refreshing, setRefreshing] = useState(false)
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    await driversQuery.refetch()
+    setRefreshing(false)
+  }
+
   if (driversQuery.isLoading) {
     return <Spinner text="Loading drivers…" />
   }
@@ -153,7 +160,21 @@ export default function Drivers() {
             Only logistics staff can view and manage drivers. Passwords are write-only and can be changed during edits.
           </p>
         </div>
-        <span style={{ fontSize: 12, color: V.dim }}>{drivers.length} drivers</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            style={{
+              padding: '6px 14px', borderRadius: 8, border: `1px solid ${V.line}`,
+              background: V.white, color: V.mid, fontSize: 12, fontWeight: 600,
+              cursor: refreshing ? 'not-allowed' : 'pointer', opacity: refreshing ? 0.6 : 1,
+              fontFamily: "'Geist', sans-serif",
+            }}
+          >
+            {refreshing ? '↻ …' : '↻ Refresh'}
+          </button>
+          <span style={{ fontSize: 12, color: V.dim }}>{drivers.length} drivers</span>
+        </div>
       </div>
 
       {isStaff && (

@@ -39,17 +39,24 @@ const ReserveASeat = () => {
     return <Navigate to="/student/onboarding" replace />;
   }
 
-  const { data: trips = [] } = useQuery({
+  const { data: trips = [], refetch: refetchTrips } = useQuery({
     queryKey: ['availableTrips', user.station],
     queryFn: () => getAvailableTrips(user.station!),
     enabled: !!user.station,
   });
 
-  const { data: reservations = [] } = useQuery({
+  const { data: reservations = [], refetch: refetchReservations } = useQuery({
     queryKey: ['reservations', user.id],
     queryFn: () => getReservations(user.id),
     enabled: !!user.id,
   });
+
+  const [refreshing, setRefreshing] = useState(false);
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await Promise.all([refetchTrips(), refetchReservations()]);
+    setRefreshing(false);
+  };
 
   const reserveMutation = useMutation({
     mutationFn: (tripId: string) => createReservation(tripId, user!.id),
@@ -67,8 +74,17 @@ const ReserveASeat = () => {
     reserveMutation.mutate(tripId, {
       onSuccess: () => toast('Reserved successfully!'),
       onError: (err) => {
-        toast(`Error: ${err.message || 'Failed to reserve'}`);
+        const msg = err?.message || err?.response?.data?.detail || '';
+        if (msg.includes('Already reserved') || msg.includes('already reserved')) {
+          // Already reserved — just show as reserved
+        } else if (msg.includes('fully booked') || msg.includes('Trip is fully booked')) {
+          // Full — no action needed, refetch will update seats
+        } else {
+          toast(`Error: ${msg || 'Failed to reserve'}`);
+        }
         setConfirmingTrip(null);
+        refetchTrips();
+        refetchReservations();
       }
     });
   };
@@ -82,13 +98,27 @@ const ReserveASeat = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {/* Page header */}
-      <div>
-        <div style={{ fontSize: 18, fontWeight: 700, color: V.ink, letterSpacing: '-0.02em' }}>
-          {t('dashboard.passenger.reserveTitle', 'Reserve a Seat')}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+        <div>
+          <div style={{ fontSize: 18, fontWeight: 700, color: V.ink, letterSpacing: '-0.02em' }}>
+            {t('dashboard.passenger.reserveTitle', 'Reserve a Seat')}
+          </div>
+          <div style={{ fontSize: 13, color: V.mid, marginTop: 4 }}>
+            {t('dashboard.passenger.reserveSubtitle', "Tonight's available trips from")} {homeStop}
+          </div>
         </div>
-        <div style={{ fontSize: 13, color: V.mid, marginTop: 4 }}>
-          {t('dashboard.passenger.reserveSubtitle', "Tonight's available trips from")} {homeStop}
-        </div>
+        <button
+          onClick={handleRefresh}
+          disabled={refreshing}
+          style={{
+            padding: '6px 14px', borderRadius: 8, border: `1px solid ${V.line}`,
+            background: V.white, color: V.mid, fontSize: 12, fontWeight: 600,
+            cursor: refreshing ? 'not-allowed' : 'pointer', opacity: refreshing ? 0.6 : 1,
+            fontFamily: "'Geist', sans-serif",
+          }}
+        >
+          {refreshing ? '↻ …' : '↻ Refresh'}
+        </button>
       </div>
 
       {/* Trip cards */}

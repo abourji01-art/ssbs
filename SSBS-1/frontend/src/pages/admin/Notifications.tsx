@@ -30,6 +30,13 @@ const Notifications = () => {
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [formTouched, setFormTouched] = useState<Record<string, boolean>>({});
 
+  const [refreshing, setRefreshing] = useState(false);
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
+
   const filtered = useMemo(() => {
     if (filter === 'All') return notifications;
     if (filter === 'Unread') return notifications.filter((n) => !n.is_read);
@@ -104,13 +111,23 @@ const Notifications = () => {
           <h2 className="text-xl font-bold text-primary-900">Notifications</h2>
           <p className="text-sm text-slate-400 mt-1">{unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}</p>
         </div>
-        <button
-          onClick={() => setModalOpen(true)}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 shadow-lg shadow-primary-600/20 transition-all active:scale-[0.98]"
-        >
-          <Send className="w-4 h-4" />
-          Send Notification
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 text-sm font-semibold text-slate-500 hover:border-primary-300 transition-all"
+            style={{ opacity: refreshing ? 0.6 : 1, cursor: refreshing ? 'not-allowed' : 'pointer' }}
+          >
+            {refreshing ? '↻ …' : '↻ Refresh'}
+          </button>
+          <button
+            onClick={() => setModalOpen(true)}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 shadow-lg shadow-primary-600/20 transition-all active:scale-[0.98]"
+          >
+            <Send className="w-4 h-4" />
+            Send Notification
+          </button>
+        </div>
       </div>
 
       {/* Filters */}

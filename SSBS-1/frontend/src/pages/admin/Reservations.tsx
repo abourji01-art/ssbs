@@ -119,9 +119,23 @@ const Reservations = () => {
             <span style={{ fontSize: 14, fontWeight: 700, color: V.ink }}>
               {t('dashboard.admin.reservations', 'Reservations')}
             </span>
-            <span style={{ fontSize: 12, color: V.dim }}>
-              {reservations.length} {t('dashboard.admin.total', 'total')}
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <button
+                onClick={handleSearch}
+                disabled={loading}
+                style={{
+                  padding: '4px 12px', borderRadius: 8, border: `1px solid ${V.line}`,
+                  background: V.white, color: V.mid, fontSize: 12, fontWeight: 600,
+                  cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1,
+                  fontFamily: "'Geist', sans-serif",
+                }}
+              >
+                {loading ? '↻ …' : '↻ Refresh'}
+              </button>
+              <span style={{ fontSize: 12, color: V.dim }}>
+                {reservations.length} {t('dashboard.admin.total', 'total')}
+              </span>
+            </div>
           </div>
 
           {reservations.length === 0 ? (

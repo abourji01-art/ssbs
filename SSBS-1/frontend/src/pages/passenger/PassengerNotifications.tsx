@@ -30,6 +30,13 @@ const PassengerNotificationsPage = () => {
   const [filter, setFilter] = useState<NotifFilter>('All');
   const [readIds, setReadIds] = useState<Set<string>>(new Set());
 
+  const [refreshing, setRefreshing] = useState(false);
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
+
   const filtered = useMemo(() => {
     if (filter === 'All') return notifications;
     return notifications.filter((n) => !readIds.has(n.id));
@@ -79,6 +86,14 @@ const PassengerNotificationsPage = () => {
             Mark all as read
           </button>
         )}
+        <button
+          onClick={handleRefresh}
+          disabled={refreshing}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 text-sm font-semibold text-slate-500 hover:border-primary-300 transition-all"
+          style={{ opacity: refreshing ? 0.6 : 1, cursor: refreshing ? 'not-allowed' : 'pointer' }}
+        >
+          {refreshing ? '↻ …' : '↻ Refresh'}
+        </button>
       </div>
 
       {/* Notification list */}

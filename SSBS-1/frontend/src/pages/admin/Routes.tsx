@@ -125,6 +125,13 @@ export default function Routes() {
     },
   })
 
+  const [refreshing, setRefreshing] = useState(false)
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    await routesQuery.refetch()
+    setRefreshing(false)
+  }
+
   if (routesQuery.isLoading || stationsQuery.isLoading) {
     return <Spinner text="Loading routes…" />
   }
@@ -158,7 +165,21 @@ export default function Routes() {
             Authenticated users can read routes. Logistics staff create and edit them using ordered station selections.
           </p>
         </div>
-        <span style={{ fontSize: 12, color: V.dim }}>{routes.length} routes</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            style={{
+              padding: '6px 14px', borderRadius: 8, border: `1px solid ${V.line}`,
+              background: V.white, color: V.mid, fontSize: 12, fontWeight: 600,
+              cursor: refreshing ? 'not-allowed' : 'pointer', opacity: refreshing ? 0.6 : 1,
+              fontFamily: "'Geist', sans-serif",
+            }}
+          >
+            {refreshing ? '↻ …' : '↻ Refresh'}
+          </button>
+          <span style={{ fontSize: 12, color: V.dim }}>{routes.length} routes</span>
+        </div>
       </div>
 
       {isStaff && (

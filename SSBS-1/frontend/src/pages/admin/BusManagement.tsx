@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBuses } from '../../hooks/useApi';
 
@@ -18,7 +19,14 @@ const V = {
 
 const BusManagement = () => {
   const { t } = useTranslation();
-  const { data: buses = [], isLoading: loading } = useBuses();
+  const { data: buses = [], isLoading: loading, refetch } = useBuses();
+
+  const [refreshing, setRefreshing] = useState(false);
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
 
   if (loading) {
     return (
@@ -43,6 +51,18 @@ const BusManagement = () => {
         <span style={{ fontSize: 13, color: V.dim }}>
           {buses.length} {t('dashboard.admin.busesInFleet', 'buses in fleet')}
         </span>
+        <button
+          onClick={handleRefresh}
+          disabled={refreshing}
+          style={{
+            padding: '6px 14px', borderRadius: 8, border: `1px solid ${V.line}`,
+            background: V.white, color: V.mid, fontSize: 12, fontWeight: 600,
+            cursor: refreshing ? 'not-allowed' : 'pointer', opacity: refreshing ? 0.6 : 1,
+            fontFamily: "'Geist', sans-serif",
+          }}
+        >
+          {refreshing ? '↻ …' : '↻ Refresh'}
+        </button>
       </div>
 
       {/* Bus cards grid */}

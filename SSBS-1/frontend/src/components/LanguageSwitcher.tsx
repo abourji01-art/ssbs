@@ -14,7 +14,11 @@ const LANGS = [
   { code: 'ar', label: 'AR' },
 ] as const;
 
-export default function LanguageSwitcher() {
+interface LanguageSwitcherProps {
+  excludeAr?: boolean;
+}
+
+export default function LanguageSwitcher({ excludeAr = false }: LanguageSwitcherProps) {
   const { i18n } = useTranslation();
   const { setLang } = useTheme();
 
@@ -22,6 +26,8 @@ export default function LanguageSwitcher() {
     i18n.changeLanguage(code);
     setLang(code as 'en' | 'fr' | 'ar');
   };
+
+  const langs = excludeAr ? LANGS.filter(l => l.code !== 'ar') : LANGS;
 
   return (
     <div style={{
@@ -31,7 +37,7 @@ export default function LanguageSwitcher() {
       borderRadius: 7,
       padding: 2,
     }}>
-      {LANGS.map(({ code, label }) => (
+      {langs.map(({ code, label }) => (
         <button
           key={code}
           onClick={() => handleChange(code)}

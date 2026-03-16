@@ -7,13 +7,19 @@ const LANGS: { code: Lang; label: string }[] = [
   { code: 'ar', label: 'AR' },
 ]
 
-export default function LanguageSwitcher() {
+interface SharedLanguageSwitcherProps {
+  excludeAr?: boolean;
+}
+
+export default function LanguageSwitcher({ excludeAr = false }: SharedLanguageSwitcherProps) {
   const { lang, setLang } = useTheme()
+
+  const langs = excludeAr ? LANGS.filter(l => l.code !== 'ar') : LANGS
 
   return (
     <div style={{ display: 'inline-flex', gap: 2, borderRadius: 8,
       border: '1px solid var(--line)', background: 'var(--surface2)', padding: 2 }}>
-      {LANGS.map(l => (
+      {langs.map(l => (
         <button
           key={l.code}
           onClick={() => setLang(l.code)}
