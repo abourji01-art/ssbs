@@ -29,18 +29,30 @@ const MyReservations = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [cancelId, setCancelId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'upcoming' | 'history'>('upcoming');
+  const [refreshing, setRefreshing] = useState(false);
 
-  const { data: activeReservations = [] } = useQuery({
+  const { data: activeReservations = [], refetch: refetchActive } = useQuery({
     queryKey: ['reservations', user?.id],
     queryFn: () => getReservations(user!.id),
     enabled: !!user?.id,
   });
 
-  const { data: pastReservations = [] } = useQuery({
+  const { data: pastReservations = [], refetch: refetchHistory } = useQuery({
     queryKey: ['reservationHistory', user?.id],
     queryFn: () => getReservationHistory(user!.id),
     enabled: !!user?.id,
   });
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    if (activeTab === 'upcoming') {
+      await refetchActive();
+    } else {
+      await refetchHistory();
+    }
+    setRefreshing(false);
+  };
 
   const cancelMutation = useMutation({
     mutationFn: (id: string) => cancelReservation(id, user!.id),
@@ -61,39 +73,38 @@ const MyReservations = () => {
     cancelMutation.mutate(cancelId);
   };
 
-  // Build flat list: active + past
-  const allRows: Array<{
-    id: string;
-    date: string;
-    route: string;
-    stop: string;
-    time: string;
-    status: string;
-    canCancel: boolean;
-  }> = [];
-
   const homeStop = user?.station_name || '—';
 
-  const addRows = (reservations: any[], isActive: boolean) => {
+  // Build rows for current tab
+  const buildRows = (reservations: any[], isActive: boolean) => {
+    const rows: Array<{
+      id: string;
+      date: string;
+      route: string;
+      stop: string;
+      time: string;
+      status: string;
+      canCancel: boolean;
+    }> = [];
     for (const res of reservations) {
-      if (!res.trip_time) continue; // safety check
+      if (!res.trip_time) continue;
       const dt = new Date(res.trip_time);
-      allRows.push({
+      rows.push({
         id: res.id,
         date: dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
         route: res.trip_bus || 'Bus 1',
         stop: homeStop,
         time: dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }),
         status: res.trip_status || 'Confirmed',
-        canCancel: isActive, // Only allow cancel on active
+        canCancel: isActive,
       });
     }
+    return rows;
   };
 
-  addRows(activeReservations, true);
-  addRows(pastReservations, false);
-
-  allRows.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  const currentRows = activeTab === 'upcoming'
+    ? buildRows(activeReservations, true)
+    : buildRows(pastReservations, false);
 
   const thStyle: React.CSSProperties = {
     padding: '10px 16px',
@@ -115,6 +126,45 @@ const MyReservations = () => {
 
   return (
     <div>
+      {/* Tab bar + refresh */}
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        marginBottom: 12,
+      }}>
+        <div style={{ display: 'flex', gap: 4, background: V.bg, borderRadius: 8, padding: 3 }}>
+          {(['upcoming', 'history'] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              style={{
+                padding: '6px 16px', borderRadius: 6, border: 'none',
+                fontSize: 13, fontWeight: 600,
+                background: activeTab === tab ? V.white : 'transparent',
+                color: activeTab === tab ? V.ink : V.dim,
+                cursor: 'pointer',
+                fontFamily: "'Geist', sans-serif",
+                boxShadow: activeTab === tab ? '0 1px 3px rgba(0,0,0,0.06)' : 'none',
+                transition: 'all 0.15s',
+              }}
+            >
+              {tab === 'upcoming' ? 'Upcoming' : 'History'}
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={handleRefresh}
+          disabled={refreshing}
+          style={{
+            padding: '6px 14px', borderRadius: 8, border: `1px solid ${V.line}`,
+            background: V.white, color: V.mid, fontSize: 12, fontWeight: 600,
+            cursor: refreshing ? 'not-allowed' : 'pointer', opacity: refreshing ? 0.6 : 1,
+            fontFamily: "'Geist', sans-serif",
+          }}
+        >
+          {refreshing ? '↻ …' : '↻ Refresh'}
+        </button>
+      </div>
+
       {/* Table */}
       <div style={{
         background: V.white,
@@ -122,7 +172,7 @@ const MyReservations = () => {
         borderRadius: 12,
         overflow: 'hidden', transition: 'background 0.3s, border-color 0.3s',
       }}>
-        {allRows.length === 0 ? (
+        {currentRows.length === 0 ? (
           <div style={{ padding: '48px 24px', textAlign: 'center' }}>
             <div style={{ fontSize: 28, marginBottom: 8 }}>📋</div>
             <div style={{ fontSize: 14, fontWeight: 600, color: V.ink }}>No reservations yet</div>
@@ -142,7 +192,7 @@ const MyReservations = () => {
                 </tr>
               </thead>
               <tbody>
-                {allRows.map((row) => (
+                {currentRows.map((row) => (
                   <tr key={row.id} style={{ transition: 'background 0.1s' }}>
                     <td style={{ ...tdStyle, fontWeight: 600, fontSize: 12 }}>{row.date}</td>
                     <td style={{ ...tdStyle, fontSize: 12 }}>{row.route}</td>

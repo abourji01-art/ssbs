@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { getLoginUrl } from '../services/api';
+import { activateDemo } from '../context/DemoContext';
 const S = {
   bg2: '#0F1117',
   bg3: '#161B27',
@@ -44,6 +45,11 @@ const AuthSection = ({ initialError = null }: AuthSectionProps) => {
       setLoginError('Failed to initialize login. Please try again.');
       setLoadingRole(null);
     }
+  };
+
+  const handlePreview = () => {
+    activateDemo();
+    window.location.href = '/admin/overview';
   };
 
   return (
@@ -228,6 +234,23 @@ const AuthSection = ({ initialError = null }: AuthSectionProps) => {
                     🚐 <strong style={{ color: S.muted }}>Driver Portal</strong> — Coming Soon
                   </p>
                 </div>
+
+                {/* Preview dashboard */}
+                <button
+                  onClick={handlePreview}
+                  className="w-full mt-3 flex items-center justify-center gap-2 font-semibold transition-all duration-200 active:scale-[0.98]"
+                  style={{
+                    background: 'transparent',
+                    color: S.muted,
+                    padding: '10px 16px',
+                    borderRadius: 10,
+                    border: `1px dashed ${S.line2}`,
+                    fontSize: 12,
+                    cursor: 'pointer',
+                  }}
+                >
+                  👁️ Preview Admin Dashboard
+                </button>
 
               </div>
             </div>

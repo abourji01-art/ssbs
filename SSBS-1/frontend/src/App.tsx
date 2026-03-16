@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { ToastProvider } from './context/ToastContext'
+import { DemoProvider } from './context/DemoContext'
 import ProtectedRoute from './components/layout/ProtectedRoute'
 
 const queryClient = new QueryClient({
@@ -44,6 +45,7 @@ export default function App() {
     <BrowserRouter>
       <ThemeProvider>
         <AuthProvider>
+          <DemoProvider>
           <ToastProvider>
             <Routes>
             <Route path="/" element={<Landing />} />
@@ -75,6 +77,7 @@ export default function App() {
             <Route path="*" element={<NotFound />} />
             </Routes>
           </ToastProvider>
+          </DemoProvider>
         </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>

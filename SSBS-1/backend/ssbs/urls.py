@@ -12,6 +12,7 @@ urlpatterns = [
     path('api/v1/reservations/', include('apps.reservations.urls')),
     path('api/v1/reports/', include('apps.reports.urls')),
     path('api/v1/drivers/', include('apps.drivers.urls')),
+    path('api/v1/notifications/', include('apps.notifications.urls')),
 ]
 
 from django.conf import settings

@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import DemoBanner from '../ui/DemoBanner'
 
 const NAV = [
   { to: '/admin/overview',      icon: '📊', label: 'Overview' },
   { to: '/admin/stations',      icon: '📍', label: 'Stations' },
   { to: '/admin/buses',         icon: '🚌', label: 'Buses' },
   { to: '/admin/routes',        icon: '🗺️', label: 'Routes' },
+  { to: '/admin/trips',         icon: '🚐', label: 'Trips' },
   { to: '/admin/reservations',  icon: '🎫', label: 'Reservations' },
   { to: '/admin/drivers',       icon: '🧑‍✈️', label: 'Drivers' },
   { to: '/admin/students',      icon: '🎓', label: 'Students' },
@@ -31,11 +33,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div style={{
       display: 'flex',
-      flexDirection: isCompact ? 'column' : 'row',
+      flexDirection: 'column',
       minHeight: '100vh',
       background: 'var(--fm-bg)',
       fontFamily: "'Geist', sans-serif",
     }}>
+      <DemoBanner />
+      <div style={{
+        display: 'flex',
+        flexDirection: isCompact ? 'column' : 'row',
+        flex: 1,
+      }}>
       {/* Sidebar */}
       <aside style={{
         width: isCompact ? '100%' : 220,
@@ -133,6 +141,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <main style={{ flex: 1, padding: isCompact ? 16 : 28, overflow: 'auto' }}>
         {children}
       </main>
+      </div>
     </div>
   )
 }

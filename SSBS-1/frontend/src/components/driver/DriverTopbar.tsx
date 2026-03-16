@@ -64,7 +64,7 @@ const DriverTopbar = ({ title, onMenuClick }: TopbarProps) => {
           </div>
 
           {/* Language Switcher */}
-          <LanguageSwitcher />
+          <LanguageSwitcher excludeAr />
 
           {/* Theme Toggle */}
           <ThemeToggle />

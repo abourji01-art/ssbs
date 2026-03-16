@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { getStoredUser, getDrivers } from '../../services/api';
@@ -30,11 +31,18 @@ const Overview = () => {
   const { t } = useTranslation();
   const user = getStoredUser();
 
-  const { data: trips = [], isLoading: tripsLoading } = useTrips();
-  const { data: routes = [], isLoading: routesLoading } = useRoutes();
-  const { data: buses = [] } = useBuses();
-  const { data: drivers = [] } = useQuery({ queryKey: ['drivers'], queryFn: getDrivers });
+  const { data: trips = [], isLoading: tripsLoading, refetch: refetchTrips } = useTrips();
+  const { data: routes = [], isLoading: routesLoading, refetch: refetchRoutes } = useRoutes();
+  const { data: buses = [], refetch: refetchBuses } = useBuses();
+  const { data: drivers = [], refetch: refetchDrivers } = useQuery({ queryKey: ['drivers'], queryFn: getDrivers });
   const loading = tripsLoading || routesLoading;
+
+  const [refreshing, setRefreshing] = useState(false);
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await Promise.all([refetchTrips(), refetchRoutes(), refetchBuses(), refetchDrivers()]);
+    setRefreshing(false);
+  };
 
   const hour = new Date().getHours();
   const greeting = hour < 12
@@ -70,14 +78,28 @@ const Overview = () => {
       {/* Greeting */}
       <div style={{
         background: V.white, borderRadius: 14, border: `1px solid ${V.line}`,
-        padding: '20px 24px',
+        padding: '20px 24px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
       }}>
-        <div style={{ fontSize: 20, fontWeight: 700, color: V.ink, letterSpacing: '-0.02em' }}>
-          {greeting}, {firstName} 👋
+        <div>
+          <div style={{ fontSize: 20, fontWeight: 700, color: V.ink, letterSpacing: '-0.02em' }}>
+            {greeting}, {firstName} 👋
+          </div>
+          <div style={{ fontSize: 13, color: V.mid, marginTop: 4 }}>
+            {t('dashboard.admin.tonightOnTrack', "Here's what's happening with your fleet tonight.")}
+          </div>
         </div>
-        <div style={{ fontSize: 13, color: V.mid, marginTop: 4 }}>
-          {t('dashboard.admin.tonightOnTrack', "Here's what's happening with your fleet tonight.")}
-        </div>
+        <button
+          onClick={handleRefresh}
+          disabled={refreshing}
+          style={{
+            padding: '6px 14px', borderRadius: 8, border: `1px solid ${V.line}`,
+            background: V.white, color: V.mid, fontSize: 12, fontWeight: 600,
+            cursor: refreshing ? 'not-allowed' : 'pointer', opacity: refreshing ? 0.6 : 1,
+            fontFamily: "'Geist', sans-serif", whiteSpace: 'nowrap' as const,
+          }}
+        >
+          {refreshing ? '↻ …' : '↻ Refresh'}
+        </button>
       </div>
 
       {/* Tonight strip */}

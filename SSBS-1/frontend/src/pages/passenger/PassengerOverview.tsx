@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -28,13 +29,13 @@ const PassengerOverview = () => {
     return <Navigate to="/student/onboarding" replace />;
   }
 
-  const { data: trips = [] } = useQuery({
+  const { data: trips = [], refetch: refetchTrips } = useQuery({
     queryKey: ['availableTrips', user.station],
     queryFn: () => getAvailableTrips(user.station!),
     enabled: !!user.station,
   });
 
-  const { data: reservations = [] } = useQuery({
+  const { data: reservations = [], refetch: refetchReservations } = useQuery({
     queryKey: ['reservations', user.id],
     queryFn: () => getReservations(user.id),
     enabled: !!user.id,
@@ -45,6 +46,13 @@ const PassengerOverview = () => {
     queryFn: () => getReservationHistory(user.id),
     enabled: !!user.id,
   });
+
+  const [refreshing, setRefreshing] = useState(false);
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await Promise.all([refetchTrips(), refetchReservations()]);
+    setRefreshing(false);
+  };
 
   // Tonight's first trip
   const nextTrip = trips[0] || null;
@@ -84,6 +92,23 @@ const PassengerOverview = () => {
         }}>🚌</div>
 
         <div style={{ position: 'relative', zIndex: 1 }}>
+          {/* Refresh icon */}
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            style={{
+              position: 'absolute', top: 0, right: 0,
+              width: 28, height: 28, borderRadius: 8,
+              background: 'rgba(255,255,255,0.15)', border: 'none',
+              color: 'white', fontSize: 14, cursor: refreshing ? 'not-allowed' : 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              opacity: refreshing ? 0.5 : 0.8,
+              transition: 'opacity 0.15s',
+            }}
+            aria-label="Refresh"
+          >
+            ↻
+          </button>
           {/* Eyebrow */}
           <div style={{ fontSize: 13, fontWeight: 500, opacity: 0.8, marginBottom: 8 }}>
             {t('dashboard.passenger.tonight', 'Tonight')} · {routeLabel} · {homeStop}

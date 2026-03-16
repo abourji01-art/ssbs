@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useRoutes, useBuses } from '../../hooks/useApi';
+import { useRoutes } from '../../hooks/useApi';
 import { useTranslation } from 'react-i18next';
 
 const V = {
@@ -20,26 +20,12 @@ const V = {
 const RouteStops = () => {
   const { t } = useTranslation();
   const { data: routes = [] } = useRoutes();
-  const { data: buses = [] } = useBuses();
-
-  const getBus = (busId: number) => buses.find((b) => b.id === busId);
-
-  // Mock stops for demo (the API doesn't return stops per route)
-  const mockStops = ['1337 Campus', 'Hay Riad', 'Agdal', 'Rabat Ville', 'Salé'];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ fontSize: 13, color: V.dim }}>{routes.length} {t('dashboard.admin.routesConfigured', 'routes')}</span>
-        <button style={{
-          padding: '7px 16px', borderRadius: 8,
-          background: V.blue, color: 'white',
-          fontSize: 12, fontWeight: 600, border: 'none', cursor: 'pointer',
-          fontFamily: "'Geist', sans-serif",
-        }}>
-          + Add Route
-        </button>
       </div>
 
       {/* Route cards */}
@@ -57,7 +43,7 @@ const RouteStops = () => {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {routes.map((route) => {
-            const bus = getBus(route.bus);
+            const stops = route.stations ?? [];
             return (
               <div key={route.id} style={{
                 background: V.white, borderRadius: 14, border: `1px solid ${V.line}`,
@@ -75,11 +61,10 @@ const RouteStops = () => {
                     </div>
                     <div>
                       <div style={{ fontSize: 14, fontWeight: 700, color: V.ink }}>
-                        Route #{route.id} — {route.direction}
+                        {route.name}
                       </div>
                       <div style={{ fontSize: 11, color: V.dim }}>
-                        Bus: {bus ? bus.matricule : `#${route.bus}`}
-                        {bus && ` · ${bus.capacity} seats`}
+                        Window: {route.window} · {stops.length} stop{stops.length !== 1 ? 's' : ''}
                       </div>
                     </div>
                   </div>
@@ -93,19 +78,23 @@ const RouteStops = () => {
                   </span>
                 </div>
 
-                {/* Stop pills */}
+                {/* Stop pills — from real API data */}
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                  {mockStops.map((stop, i) => (
-                    <span key={i} style={{
-                      display: 'inline-flex', alignItems: 'center', gap: 4,
-                      fontSize: 11, fontWeight: 500, padding: '4px 10px',
-                      borderRadius: 6, background: i === 0 ? V.blueBg : V.pillBg,
-                      color: i === 0 ? V.blue : V.mid,
-                      border: `1px solid ${i === 0 ? V.blueBdr : V.line}`,
-                    }}>
-                      {i === 0 ? '🏫' : '📍'} {stop}
-                    </span>
-                  ))}
+                  {stops.length === 0 ? (
+                    <span style={{ fontSize: 11, color: V.dim }}>No stops assigned</span>
+                  ) : (
+                    stops.map((rs, i) => (
+                    <span key={`${route.id}-${rs.station.id}`} style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 4,
+                        fontSize: 11, fontWeight: 500, padding: '4px 10px',
+                        borderRadius: 6, background: i === 0 ? V.blueBg : V.pillBg,
+                        color: i === 0 ? V.blue : V.mid,
+                        border: `1px solid ${i === 0 ? V.blueBdr : V.line}`,
+                      }}>
+                        {i === 0 ? '🏫' : '📍'} {rs.station.name}
+                      </span>
+                    ))
+                  )}
                 </div>
               </div>
             );

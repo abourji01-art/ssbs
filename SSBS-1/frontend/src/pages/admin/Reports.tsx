@@ -7,7 +7,14 @@ import Spinner from '../../components/ui/Spinner';
 
 const Reports = () => {
   const [dateRange, setDateRange] = useState({ from: '2025-02-01', to: '2025-02-28' });
-  const { data: reportData, isLoading } = useReports();
+  const { data: reportData, isLoading, refetch } = useReports();
+
+  const [refreshing, setRefreshing] = useState(false);
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
 
   if (isLoading || !reportData) {
     return <Spinner />;
@@ -32,6 +39,14 @@ const Reports = () => {
           <p className="text-sm text-slate-400 mt-1">Insights across all routes and buses</p>
         </div>
         <div className="flex items-center gap-3 flex-wrap">
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 text-sm font-semibold text-slate-500 hover:border-primary-300 transition-all"
+            style={{ opacity: refreshing ? 0.6 : 1, cursor: refreshing ? 'not-allowed' : 'pointer' }}
+          >
+            {refreshing ? '↻ …' : '↻ Refresh'}
+          </button>
           <div className="flex items-center gap-2 text-sm text-slate-600">
             <input
               type="date"
