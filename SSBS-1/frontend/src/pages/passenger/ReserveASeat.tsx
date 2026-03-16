@@ -76,9 +76,9 @@ const ReserveASeat = () => {
       onError: (err) => {
         const msg = err?.message || err?.response?.data?.detail || '';
         if (msg.includes('Already reserved') || msg.includes('already reserved')) {
-          // Already reserved — just show as reserved
+          toast('Already reserved for this trip.');
         } else if (msg.includes('fully booked') || msg.includes('Trip is fully booked')) {
-          // Full — no action needed, refetch will update seats
+          toast('Trip is fully booked.', 'warning');
         } else {
           toast(`Error: ${msg || 'Failed to reserve'}`);
         }
