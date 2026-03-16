@@ -100,7 +100,7 @@ const PassengerOverview = () => {
           {/* Route subtitle */}
           <div style={{ fontSize: 13, opacity: 0.7, marginTop: 4 }}>
             {nextTrip
-              ? `${busLabel} · ${routeLabel} · ${nextTrip.seats ?? '-'} ${t('dashboard.passenger.seatsLeft', 'seats left')}`
+              ? `${busLabel} · ${routeLabel} · ${nextTrip.seats_left ?? '-'} ${t('dashboard.passenger.seatsLeft', 'seats left')}`
               : t('dashboard.passenger.serviceHours', 'Service runs 10PM–6AM')}
           </div>
 

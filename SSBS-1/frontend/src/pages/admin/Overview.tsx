@@ -45,7 +45,7 @@ const Overview = () => {
   const firstName = user?.login_42 ?? 'Admin';
 
   const activeTrips = trips.filter((tr) => !tr.archived_at);
-  const totalSeats = activeTrips.reduce((sum, tr) => sum + tr.seats, 0);
+  const totalSeats = activeTrips.reduce((sum, tr) => sum + tr.seats_left, 0);
   const earliest = activeTrips.length > 0
     ? activeTrips.reduce((a, b) =>
         a.departure_datetime < b.departure_datetime ? a : b)

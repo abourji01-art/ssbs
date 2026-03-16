@@ -23,6 +23,7 @@ import AdminOverview     from './pages/admin/Overview'
 import AdminStations     from './pages/admin/Stations'
 import AdminBuses        from './pages/admin/Buses'
 import AdminRoutes       from './pages/admin/Routes'
+import AdminTrips        from './pages/admin/Trips'
 import AdminReservations from './pages/admin/Reservations'
 import AdminDrivers      from './pages/admin/Drivers'
 import AdminStudents     from './pages/admin/Students'
@@ -54,6 +55,7 @@ export default function App() {
             <Route path="/admin/stations" element={<ProtectedRoute role="LOGISTICS_STAFF"><AdminLayout><AdminStations /></AdminLayout></ProtectedRoute>} />
             <Route path="/admin/buses" element={<ProtectedRoute role="LOGISTICS_STAFF"><AdminLayout><AdminBuses /></AdminLayout></ProtectedRoute>} />
             <Route path="/admin/routes" element={<ProtectedRoute role="LOGISTICS_STAFF"><AdminLayout><AdminRoutes /></AdminLayout></ProtectedRoute>} />
+            <Route path="/admin/trips" element={<ProtectedRoute role="LOGISTICS_STAFF"><AdminLayout><AdminTrips /></AdminLayout></ProtectedRoute>} />
             <Route path="/admin/reservations" element={<ProtectedRoute role="LOGISTICS_STAFF"><AdminLayout><AdminReservations /></AdminLayout></ProtectedRoute>} />
             <Route path="/admin/drivers" element={<ProtectedRoute role="LOGISTICS_STAFF"><AdminLayout><AdminDrivers /></AdminLayout></ProtectedRoute>} />
             <Route path="/admin/students" element={<ProtectedRoute role="LOGISTICS_STAFF"><AdminLayout><AdminStudents /></AdminLayout></ProtectedRoute>} />

@@ -25,7 +25,7 @@ const NAV: Record<string, NavItem[]> = {
   transport: [
     { emoji: '🚌', label: 'Buses', path: '/admin/buses' },
     { emoji: '🗺️', label: 'Routes', path: '/admin/routes' },
-    { emoji: '🕐', label: 'Trips', path: '/admin/trips', badge: 'SOON' },
+    { emoji: '🕐', label: 'Trips', path: '/admin/trips' },
   ],
   people: [
     { emoji: '📋', label: 'Reservations', path: '/admin/reservations', count: true },
