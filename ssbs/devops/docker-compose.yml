@@ -1,0 +1,86 @@
+services:
+  # Elasticsearch: The Database
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.2.3
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+      - ELASTIC_PASSWORD=atahtah
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - xpack.monitoring.collection.enabled=true
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    networks:
+      - elk
+
+  # Logstash: The Pipeline (Ingest & Filter)
+  logstash:
+    image: docker.elastic.co/logstash/logstash-oss:9.2.3
+    container_name: logstash
+    environment:
+      - ELASTICSEARCH_PASSWORD=atahtah
+    ports:
+      - "5044:5044"
+      - "5000:5000/tcp"
+      - "5000:5000/udp"
+      - "9600:9600"
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+    depends_on:
+      - elasticsearch
+    networks:
+      - elk
+
+  # Kibana: The Visualization Dashboard
+  kibana:
+    image: docker.elastic.co/kibana/kibana:9.2.3
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=atahtah
+      - xpack.security.enabled=true
+    depends_on:
+      - elasticsearch
+    networks:
+      - elk
+
+  # Setup: Configure ILM policies and Kibana
+  setup:
+    image: curlimages/curl:latest
+    container_name: elk-setup
+    volumes:
+      - ./setup-ilm-policy.sh:/setup-ilm-policy.sh
+      - ./setup-kibana.sh:/setup-kibana.sh
+    depends_on:
+      - elasticsearch
+      - kibana
+      - logstash
+    networks:
+      - elk
+    command: >
+      sh -c "
+        echo 'Waiting for services to be ready...' &&
+        sleep 30 &&
+        sh /setup-ilm-policy.sh &&
+        sh /setup-kibana.sh &&
+        echo 'Setup complete!' &&
+        exit 0
+      "
+    restart: "no"
+
+volumes:
+  elasticsearch-data:
+
+networks:
+  elk:
+    driver: bridge

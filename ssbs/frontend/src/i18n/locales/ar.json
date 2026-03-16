@@ -1,0 +1,289 @@
+{
+  "translation": {
+    "landing": {
+      "nav": {
+        "about": "من نحن",
+        "features": "المميزات",
+        "getStarted": "ابدأ الآن",
+        "login": "تسجيل الدخول",
+        "signup": "إنشاء حساب",
+        "dashboard": "لوحة التحكم"
+      },
+      "hero": {
+        "badge": "الحجز متاح الآن",
+        "title": "نقل ذكي.",
+        "subtitle": "محجوز لك.",
+        "description": "منصة حجز المقاعد لحافلة الليل في مدرسة 1337، ابن جرير.",
+        "cta": "ابدأ مجاناً",
+        "learnMore": "اعرف المزيد",
+        "stats": {
+          "riders": "طالب",
+          "routes": "مسار",
+          "onTime": "10م — 6ص"
+        }
+      },
+      "whoWeAre": {
+        "badge": "من نحن",
+        "title": "تعرف على الفريق خلف",
+        "description": "فريق من المطورين يعملون معاً لحل تحديات النقل الحقيقية."
+      },
+      "features": {
+        "badge": "عن المشروع",
+        "title": "حل مشاكل النقل الحقيقية",
+        "titleHighlight": "بحلول ذكية",
+        "description": "من حافلات الليل المكتظة إلى الإلغاءات في اللحظة الأخيرة — رأينا كل شيء. فليتمارك يواجه هذه المشاكل لطلاب 1337.",
+        "problemsLabel": "المشكلة",
+        "solutionsLabel": "الحل",
+        "problems": [
+          "حافلات مكتظة بدون تحكم في السعة",
+          "توزيع غير عادل للمقاعد — الأول فقط يُخدَم",
+          "لا رؤية على جدول الحافلة أو المحطات",
+          "ضعف التواصل بين المديرين والسائقين والطلاب"
+        ],
+        "solutions": [
+          "حجز ذكي للمقاعد — احجز مكانك قبل مغادرة حرم 1337",
+          "تعيين تلقائي حسب محطتك — عادل للجميع",
+          "رؤية كاملة — محطات الحافلة 1 و2، الأوقات، الحالة الفورية",
+          "إشعارات فورية — تغييرات الجدول، تذكيرات المغادرة، تحديثات حية"
+        ],
+        "solutionTitles": [
+          "حجز المقاعد",
+          "تخصيص ذكي",
+          "رؤية المسارات",
+          "تقارير فورية"
+        ],
+        "flipHint": "اضغط على كل بطاقة لكشف الحل",
+        "flipAll": "اقلب كل البطاقات",
+        "resetAll": "إعادة تعيين البطاقات"
+      },
+      "auth": {
+        "badge": "ابدأ الآن",
+        "title": "رحلتك في انتظارك.",
+        "subtitle": "انضم إلى فليتمارك اليوم.",
+        "description": "سواء كنت مديراً يدير الحافلة، أو طالباً في 1337 يبحث عن مقعد مضمون، أو سائقاً — فليتمارك مصمم لك.",
+        "login": {
+          "tab": "تسجيل الدخول",
+          "username": "اسم المستخدم",
+          "password": "كلمة المرور",
+          "button": "تسجيل الدخول",
+          "loggingIn": "…جاري تسجيل الدخول",
+          "noAccount": "ليس لديك حساب؟",
+          "forgotPassword": "نسيت كلمة المرور؟",
+          "role": "أنا..."
+        },
+        "signup": {
+          "tab": "إنشاء حساب",
+          "fullName": "الاسم الكامل",
+          "email": "البريد الإلكتروني",
+          "password": "كلمة المرور",
+          "confirmPassword": "تأكيد كلمة المرور",
+          "role": "أنا...",
+          "button": "إنشاء حساب",
+          "hasAccount": "لديك حساب بالفعل؟"
+        },
+        "roles": {
+          "admin": "مدير / منظم",
+          "adminDesc": "إدارة الأسطول والمسارات والمستخدمين",
+          "passenger": "طالب 1337",
+          "passengerDesc": "احجز مقعدك وتابع الحافلة",
+          "driver": "سائق",
+          "driverDesc": "عرض الجدول والطلاب"
+        },
+        "loginWith42": "المتابعة بحساب 42 Intra",
+        "connecting42": "…42 جاري الاتصال بـ",
+        "orLoginWith": "أو سجل الدخول بالبيانات",
+        "errors": {
+          "usernameRequired": "اسم المستخدم مطلوب",
+          "usernameInvalid": "أدخل اسم مستخدم صالح (3 أحرف على الأقل)",
+          "passwordRequired": "كلمة المرور مطلوبة",
+          "passwordLength": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
+          "nameRequired": "الاسم الكامل مطلوب",
+          "nameLength": "يجب أن يكون الاسم حرفين على الأقل",
+          "emailRequired": "البريد الإلكتروني مطلوب",
+          "emailInvalid": "أدخل بريداً إلكترونياً صالحاً",
+          "confirmRequired": "يرجى تأكيد كلمة المرور",
+          "passwordMismatch": "كلمات المرور غير متطابقة"
+        }
+      },
+
+      "footer": {
+        "tagline": "إدارة حافلة الليل لمدرسة 1337، ابن جرير. كل رحلة محسوبة.",
+        "quickLinks": "روابط سريعة",
+        "aboutUs": "من نحن",
+        "resources": "المصادر",
+        "documentation": "مدرسة 1337",
+        "apiReference": "شبكة 42",
+        "supportCenter": "مركز الدعم",
+        "statusPage": "اتصل بنا",
+        "legal": "قانوني",
+        "privacy": "سياسة الخصوصية",
+        "terms": "شروط الخدمة",
+        "cookies": "سياسة الكوكيز",
+        "copyright": "© 2026 فليتمارك. جميع الحقوق محفوظة.",
+        "bottomTagline": "صنعه طلاب 1337، لطلاب 1337. 🏫 ابن جرير، المغرب."
+      }
+    },
+    "dashboard": {
+      "sidebar": {
+        "overview": "نظرة عامة",
+        "buses": "إدارة الحافلات",
+        "routes": "المسارات والمحطات",
+        "users": "إدارة المستخدمين",
+        "schedule": "إدارة الجدول",
+        "reports": "التقارير والتحليلات",
+        "notifications": "الإشعارات",
+        "profile": "إعدادات الملف",
+        "reserve": "حجز مقعد",
+        "myReservations": "حجوزاتي",
+        "myRoute": "مساري",
+        "passengers": "قائمة الطلاب",
+        "logout": "تسجيل الخروج"
+      },
+      "common": {
+        "search": "بحث...",
+        "searchRoutes": "البحث عن مسارات أو حافلات…",
+        "searchPassengers": "البحث عن طلاب أو محطات…",
+        "save": "حفظ",
+        "cancel": "إلغاء",
+        "confirm": "تأكيد",
+        "delete": "حذف",
+        "edit": "تعديل",
+        "add": "إضافة",
+        "loading": "جاري التحميل...",
+        "error": "حدث خطأ",
+        "retry": "إعادة المحاولة",
+        "empty": "لا شيء هنا بعد",
+        "profile": "الملف",
+        "settings": "الإعدادات"
+      },
+      "admin": {
+        "welcome": "مرحباً، مدير",
+        "goodEvening": "مساء الخير، {{name}} 👋",
+        "tonightOnTrack": "نقل الليلة في الموعد.",
+        "busesActive": "الحافلات النشطة",
+        "seatsLeft": "المقاعد المتبقية",
+        "liveDepart": "مباشر · المغادرة 11:00 م",
+        "registeredStudents": "الطلاب المسجلون",
+        "activeRoutes": "المسارات النشطة",
+        "operatingHours": "ساعات التشغيل",
+        "everyNight": "كل ليلة",
+        "recentActivity": "النشاط الأخير",
+        "buses2Active": "{{count}} حافلات في الخدمة الليلة",
+        "addBus": "+ إضافة حافلة",
+        "seatsTaken": "مقاعد محجوزة",
+        "viewRoute": "عرض المسار",
+        "addRoute": "+ إضافة مسار",
+        "exportCsv": "تصدير CSV",
+        "forTonight": "لهذه الليلة",
+        "searchStudent": "البحث عن طالب...",
+        "addDriver": "+ إضافة سائق",
+        "driversTonight": "سائقون مخصصون الليلة",
+        "onDuty": "في الخدمة",
+        "remove": "حذف",
+        "registeredVia42": "مسجلون عبر 42 إنترا",
+        "homeStop": "محطتي",
+        "totalRides": "إجمالي الرحلات",
+        "systemConfig": "إعدادات النظام",
+        "allowReservations": "السماح بالحجوزات",
+        "allowReservationsSub": "يمكن للطلاب حجز مقاعد للرحلات",
+        "autoCloseFull": "الإغلاق التلقائي عند الامتلاء",
+        "autoCloseFullSub": "إيقاف الحجوزات عند امتلاء الحافلة",
+        "lateNightRoute": "مسار منتصف الليل",
+        "lateNightRouteSub": "تفعيل الحافلة المدمجة 1ص-6ص",
+        "language": "اللغة",
+        "languageSub": "اللغة الافتراضية للمنصة"
+      },
+      "passenger": {
+        "welcome": "مرحباً",
+        "tonightRouteA": "الليلة · المسار أ · {{stop}}",
+        "routeAFull": "{{stop}} ← نخيل ← المحطة ← مدرسة 1337 · {{seats}} مقعداً متبقياً",
+        "reserveMySeat": "← احجز مقعدي",
+        "alsoAvailable": "2:00 ص متاح أيضاً",
+        "myHomeStop": "محطتي",
+        "change": "← تغيير",
+        "ridesThisMonth": "رحلات هذا الشهر",
+        "viewHistory": "← عرض السجل",
+        "reserveSeat": "حجز مقعد",
+        "tonightTrips": "رحلات الليلة من {{stop}}",
+        "nightShuttleA": "نقل ليلي — المسار أ",
+        "lateNightAll": "منتصف الليل — جميع المحطات",
+        "reserved": "محجوز ✓",
+        "reserve": "← احجز",
+        "myHistory": "حجوزاتي",
+        "changeStop": "تغيير المحطة",
+        "notifications": "الإشعارات",
+        "notifSub": "تذكيري قبل 30 دقيقة من رحلتي",
+        "autoReserve": "الحجز التلقائي",
+        "autoReserveSub": "تعبئة محطتي تلقائياً في كل حجز",
+        "signOut": "تسجيل الخروج",
+        "signOutSub": "ستحتاج لتسجيل الدخول مرة أخرى عبر 42 إنترا",
+        "whereDoYouGetOn": "من أين تركب؟",
+        "pickStopOnce": "اختر محطتك مرة واحدة. سنتذكرها ونعرض لك الرحلات المناسبة كل ليلة.",
+        "skipForNow": "تخطي الآن",
+        "saveMyStop": "حفظ محطتي ←"
+      },
+      "driver": {
+        "welcome": "مرحباً، سائق",
+        "comingSoon": "قريباً",
+        "driverPortal": "بوابة السائق",
+        "driverSub": "مساحة بسيطة ومخصصة للسائقين لإدارة كل رحلة.",
+        "qrCheckin": "تسجيل QR",
+        "badgeScan": "مسح البطاقة",
+        "passengerList": "قائمة الركاب",
+        "routeStops": "المسار والمحطات",
+        "adminAlerts": "تنبيهات الإدارة",
+        "tripSummary": "ملخص الرحلة",
+        "sempreSub": "دائماً للمدرسة — بني من 1337، لـ 1337.",
+        "openToContrib": "مفتوح للمساهمين",
+        "openNote": "بعض الوحدات متروكة عمداً لطلاب 1337 للبناء عليها. هذا مشروع تعليمي حي.",
+        "viewRepo": "← عرض المستودع على GitHub"
+      },
+      "nav": {
+        "appName": "فليتمارك",
+        "adminPanel": "لوحة الإدارة",
+        "studentPortal": "بوابة الطالب",
+        "driverPortal": "بوابة السائق",
+        "main": "الرئيسية",
+        "transport": "النقل",
+        "people": "الأشخاص",
+        "system": "النظام",
+        "account": "الحساب",
+        "myShuttle": "نقلتي",
+        "staff": "الموظفون"
+      },
+      "status": {
+        "active": "نشط",
+        "inactive": "غير نشط",
+        "confirmed": "مؤكد",
+        "pending": "قيد الانتظار",
+        "cancelled": "ملغي",
+        "started": "جاري",
+        "ended": "منتهي",
+        "scheduled": "مجدول",
+        "completed": "مكتمل"
+      },
+      "table": {
+        "student": "الطالب",
+        "route": "المسار",
+        "stop": "المحطة",
+        "departure": "المغادرة",
+        "status": "الحالة",
+        "date": "التاريخ",
+        "time": "الوقت",
+        "today": "اليوم",
+        "yesterday": "أمس"
+      },
+      "errors": {
+        "invalidCredentials": "اسم المستخدم أو كلمة المرور غير صحيحة",
+        "networkError": "فشل الاتصال. يرجى المحاولة مرة أخرى.",
+        "serverError": "خطأ في الخادم. حاول لاحقاً.",
+        "unauthorized": "انتهت الجلسة. يرجى تسجيل الدخول مرة أخرى.",
+        "forbidden": "ليس لديك صلاحية.",
+        "notFound": "غير موجود."
+      },
+      "toast": {
+        "langNotAvailable": "{{lang}} متاح فقط في الصفحة الرئيسية"
+      }
+    }
+  }
+}

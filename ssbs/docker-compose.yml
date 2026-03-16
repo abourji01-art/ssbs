@@ -1,0 +1,295 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# SSBS - Smart School Bus System
+# Docker Compose Configuration
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+services:
+  # ──────────────────────────────────────────────────────────────────────────
+  # WAF — ModSecurity + NGINX Reverse Proxy (single entry point)
+  # ──────────────────────────────────────────────────────────────────────────
+  waf:
+    build: ./waf
+    container_name: ssbs-waf
+    restart: unless-stopped
+    ports:
+      - "8443:443"
+    environment:
+      # ModSecurity engine ON (enforcing)
+      MODSEC_RULE_ENGINE: "On"
+      # Paranoia level 2 = hardened
+      PARANOIA: "2"
+      # Anomaly scoring thresholds (lower = stricter)
+      ANOMALY_INBOUND: "5"
+      ANOMALY_OUTBOUND: "4"
+      # Allowed HTTP methods
+      ALLOWED_METHODS: "GET HEAD POST PUT PATCH DELETE OPTIONS"
+    depends_on:
+      backend:
+        condition: service_started
+      frontend:
+        condition: service_started
+    networks:
+      - ssbs-network
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Database Service (PostgreSQL)
+  # ──────────────────────────────────────────────────────────────────────────
+  db:
+    image: postgres:15-alpine
+    container_name: ssbs-db
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ssbs_db}
+      POSTGRES_USER: ${POSTGRES_USER:-ssbs_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+    volumes:
+      - ./database/db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ssbs_user} -d ${POSTGRES_DB:-ssbs_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5433:5432"
+    networks:
+      - ssbs-network
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # HashiCorp Vault — Secrets Management
+  # ──────────────────────────────────────────────────────────────────────────
+  vault:
+    image: hashicorp/vault:1.15
+    container_name: ssbs-vault
+    restart: unless-stopped
+    cap_add:
+      - IPC_LOCK
+    user: root
+    environment:
+      VAULT_ADDR: "http://0.0.0.0:8200"
+      VAULT_API_ADDR: "http://0.0.0.0:8200"
+    volumes:
+      - vault-data:/vault/data
+      - vault-approle:/vault/approle
+      - ./vault/config:/vault/config:ro
+      - ./vault/policies:/vault/policies:ro
+    entrypoint: /bin/sh
+    command:
+      - -c
+      - |
+        chown -R vault:vault /vault/data /vault/approle
+        su-exec vault vault server -config=/vault/config/vault.hcl
+    networks:
+      - ssbs-network
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Vault Init — Seeds secrets on first boot (runs once then exits)
+  # ──────────────────────────────────────────────────────────────────────────
+  vault-init:
+    image: hashicorp/vault:1.15
+    container_name: ssbs-vault-init
+    restart: "no"
+    env_file:
+      - .env
+    environment:
+      VAULT_ADDR: "http://vault:8200"
+    volumes:
+      - vault-data:/vault/data
+      - vault-approle:/vault/approle
+      - ./vault/scripts:/vault/scripts:ro
+      - ./vault/policies:/vault/policies:ro
+    entrypoint: /bin/sh
+    command: ["/vault/scripts/init.sh"]
+    depends_on:
+      vault:
+        condition: service_started
+    networks:
+      - ssbs-network
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Backend Service (Django)
+  # ──────────────────────────────────────────────────────────────────────────
+  backend:
+    build: ./backend
+    container_name: ssbs-backend
+    restart: unless-stopped
+    entrypoint: ["/entrypoint.sh"]
+    volumes:
+      - ./backend:/app
+      - vault-approle:/vault/approle:ro
+      - ./logs:/var/log/ssbs
+    ports:
+      - "8000:8000"
+    environment:
+      VAULT_ADDR: "http://vault:8200"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - ssbs-network
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Cron Service (Trip Archiving)
+  # CRITICAL: entrypoint: [""] overrides Dockerfile ENTRYPOINT
+  # Without this, the container runs entrypoint.sh and starts a Django server
+  # ──────────────────────────────────────────────────────────────────────────
+  cron:
+    build: ./backend
+    container_name: ssbs-cron
+    restart: unless-stopped
+    entrypoint: [""]
+    command: >
+      sh -c "while true; do python manage.py archive_trips; sleep 60; done"
+    volumes:
+      - ./backend:/app
+      - vault-approle:/vault/approle:ro
+      - ./logs:/var/log/ssbs
+    environment:
+      VAULT_ADDR: "http://vault:8200"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - ssbs-network
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Frontend Service (Vite/React)
+  # ──────────────────────────────────────────────────────────────────────────
+  frontend:
+    build: ./frontend
+    container_name: ssbs-frontend
+    restart: unless-stopped
+    entrypoint: ["/entrypoint.sh"]
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - ssbs-frontend-node-modules:/app/node_modules
+    env_file:
+      - .env
+    environment:
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:8000/api/v1}
+    networks:
+      - ssbs-network
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Networks
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # ──────────────────────────────────────────────────────────────────────────
+  # ELK Stack Services
+  # ──────────────────────────────────────────────────────────────────────────
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.2.3
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+      - ELASTIC_PASSWORD=atahtah
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.monitoring.collection.enabled=true
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+      - ./elk/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./elk/certs/elasticsearch:/usr/share/elasticsearch/config/certificates:ro
+    networks:
+      - ssbs-network
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash-oss:9.2.3
+    container_name: logstash
+    environment:
+      - ELASTICSEARCH_PASSWORD=atahtah
+    ports:
+      - "5044:5044"
+      - "5001:5000/tcp"
+      - "5001:5000/udp"
+      - "9600:9600"
+    volumes:
+      - ./elk/logstash/pipeline:/usr/share/logstash/pipeline
+      - ./elk/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./elk/certs/logstash:/usr/share/logstash/config/certificates:ro
+      - ./elk/certs/elasticsearch:/usr/share/logstash/config/elasticsearch-certs:ro
+      - ./logs:/usr/share/logstash/external-logs:ro
+    depends_on:
+      - elasticsearch
+    networks:
+      - ssbs-network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:9.2.3
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=atahtah
+      - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=/usr/share/kibana/config/certificates/ca.crt
+      - SERVER_SSL_ENABLED=true
+      - SERVER_SSL_CERTIFICATE=/usr/share/kibana/config/certificates/kibana.crt
+      - SERVER_SSL_KEY=/usr/share/kibana/config/certificates/kibana.key
+      - xpack.security.enabled=true
+    volumes:
+      - ./elk/certs/kibana:/usr/share/kibana/config/certificates:ro
+      - ./elk/certs/elasticsearch:/usr/share/kibana/config/elasticsearch-certs:ro
+    depends_on:
+      - elasticsearch
+    networks:
+      - ssbs-network
+
+  elk-setup:
+    image: curlimages/curl:latest
+    container_name: elk-setup
+    volumes:
+      - ./elk/setup-ilm-policy.sh:/setup-ilm-policy.sh
+      - ./elk/setup-kibana.sh:/setup-kibana.sh
+      - ./elk/setup-kibana-user.sh:/setup-kibana-user.sh
+      - ./elk/certs:/certs:ro
+    depends_on:
+      - elasticsearch
+      - kibana
+      - logstash
+    networks:
+      - ssbs-network
+    command: >
+      sh -c "
+        echo 'Waiting for services to be ready...' &&
+        sleep 30 &&
+        sh /setup-kibana-user.sh &&
+        sleep 5 &&
+        sh /setup-ilm-policy.sh &&
+        sh /setup-kibana.sh &&
+        echo 'Setup complete!' &&
+        exit 0
+      "
+    restart: "no"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Networks
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+networks:
+  ssbs-network:
+    name: ssbs-network
+    driver: bridge
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Volumes
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+volumes:
+  ssbs-frontend-node-modules:
+    name: ssbs-frontend-node-modules
+  vault-data:
+    name: ssbs-vault-data
+  vault-approle:
+    name: ssbs-vault-approle
+  elasticsearch-data:
+

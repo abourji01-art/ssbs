@@ -1,0 +1,177 @@
+# ================================
+# SSBS - Smart School Bus System
+# .gitignore
+# ================================
+
+# =====================================
+# Environment & Secrets
+# =====================================
+.env.local
+.env.*.local
+.env.development
+.env.production
+*.pem
+*.key
+secrets/
+
+# =====================================
+# Dependencies
+# =====================================
+node_modules/
+vendor/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# =====================================
+# Build outputs
+# =====================================
+dist/
+build/
+out/
+*.egg-info/
+*.egg
+.eggs/
+*.whl
+
+# =====================================
+# IDE & Editor
+# =====================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# =====================================
+# OS generated
+# =====================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.bak
+*.tmp
+*.temp
+
+# =====================================
+# Logs & Debug
+# =====================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# =====================================
+# Testing
+# =====================================
+coverage/
+.nyc_output/
+*.lcov
+.coverage
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# =====================================
+# Docker
+# =====================================
+# Ignore docker-compose override files (local customizations)
+docker-compose.override.yml
+docker-compose.local.yml
+
+# =====================================
+# Database
+# =====================================
+*.db
+*.sqlite
+*.sqlite3
+data/
+postgres-data/
+database/
+
+# =====================================
+# Frontend specific
+# =====================================
+# Dependency directories
+frontend/node_modules/
+
+# Build
+frontend/dist/
+frontend/build/
+frontend/.next/
+frontend/.nuxt/
+frontend/.output/
+
+# Cache
+frontend/.cache/
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+
+# =====================================
+# Backend specific
+# =====================================
+backend/__pycache__/
+backend/*.pyc
+backend/venv/
+backend/.venv/
+backend/staticfiles/
+backend/media/
+backend/node_modules/
+
+# Django
+*.pot
+local_settings.py
+db.sqlite3
+media/
+
+# =====================================
+# Miscellaneous
+# =====================================
+*.bak
+*.backup
+.cache/
+tmp/
+temp/
+
+# =====================================
+# Keep these folders (add .gitkeep inside)
+# =====================================
+!frontend/src/.gitkeep
+!backend/src/.gitkeep
+!shared/.gitkeep
+!docs/.gitkeep
+
+# =====================================
+# WAF / SSL
+# =====================================
+waf/ssl/
+
+# =====================================
+# Vault
+# =====================================
+vault/data/

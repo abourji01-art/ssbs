@@ -1,0 +1,95 @@
+:root {
+  --bg:        #F8F9FB;
+  --surface:   #FFFFFF;
+  --surface2:  #F1F3F7;
+  --ink:       #0F172A;
+  --mid:       #475569;
+  --dim:       #94A3B8;
+  --line:      #E2E8F0;
+  --line2:     #CBD5E1;
+
+  --blue:      #0EA5E9;
+  --blue2:     #2563EB;
+  --blue-bg:   #E0F2FE;
+  --blue-bdr:  #BAE6FD;
+
+  --green:     #10B981;
+  --green-bg:  #D1FAE5;
+  --green-bdr: #A7F3D0;
+
+  --amber:     #F59E0B;
+  --amber-bg:  #FEF3C7;
+  --amber-bdr: #FDE68A;
+
+  --red:       #EF4444;
+  --red-bg:    #FEE2E2;
+  --red-bdr:   #FECACA;
+
+  --radius:    10px;
+  --font:      'Geist', system-ui, sans-serif;
+
+  /* --fm-* aliases used by landing page components */
+  --fm-bg:        var(--bg);
+  --fm-surface:   var(--surface);
+  --fm-surface2:  var(--surface2);
+  --fm-ink:       var(--ink);
+  --fm-mid:       var(--mid);
+  --fm-dim:       var(--dim);
+  --fm-line:      var(--line);
+  --fm-blue:      var(--blue);
+  --fm-blue2:     var(--blue2);
+  --fm-blue-bg:   var(--blue-bg);
+  --fm-blue-bdr:  var(--blue-bdr);
+  --fm-green:     var(--green);
+  --fm-green-bg:  var(--green-bg);
+  --fm-green-bdr: var(--green-bdr);
+  --fm-shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --fm-shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --fm-shadow-lg: 0 12px 32px rgba(0,0,0,0.12);
+
+  /* Navbar-specific vars */
+  --nav-bg:          rgba(248,249,251,0.85);
+  --text-primary:    var(--ink);
+  --text-secondary:  var(--mid);
+  --bg-tertiary:     var(--surface2);
+  --border-default:  var(--line);
+  --border-subtle:   var(--line);
+  --accent-primary:  var(--blue);
+  --accent-hover:    var(--blue2);
+  --shadow-sm:       var(--fm-shadow-sm);
+}
+
+[data-theme="dark"] {
+  --bg:        #0D1117;
+  --surface:   #161B22;
+  --surface2:  #1C2333;
+  --ink:       #F0F6FC;
+  --mid:       #8B949E;
+  --dim:       #6E7681;
+  --line:      #21262D;
+  --line2:     #30363D;
+
+  --blue:      #38BDF8;
+  --blue2:     #60A5FA;
+  --blue-bg:   rgba(12,74,110,0.2);
+  --blue-bdr:  #0C4A6E;
+
+  --green:     #3FB950;
+  --green-bg:  rgba(20,48,24,0.2);
+  --green-bdr: #143018;
+
+  --amber:     #D29922;
+  --amber-bg:  rgba(45,31,0,0.2);
+  --amber-bdr: #2D1F00;
+
+  --red:       #F85149;
+  --red-bg:    rgba(45,16,0,0.2);
+  --red-bdr:   #2D1000;
+
+  /* Dark overrides for navbar */
+  --nav-bg:         rgba(13,17,23,0.85);
+  --fm-shadow-sm:   0 1px 3px rgba(0,0,0,0.2);
+  --fm-shadow-md:   0 4px 12px rgba(0,0,0,0.25);
+  --fm-shadow-lg:   0 12px 32px rgba(0,0,0,0.35);
+  --shadow-sm:      var(--fm-shadow-sm);
+}
