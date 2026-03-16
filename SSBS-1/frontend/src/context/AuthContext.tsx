@@ -9,6 +9,7 @@ import {
   storeAuthTokens,
   storeUser,
 } from '../services/api'
+import { isDemoMode } from './DemoContext'
 
 interface AuthState {
   user: User | null
@@ -60,6 +61,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!hasAccess && !hasRefresh) {
         if (active) {
           setUserState(null)
+          setIsLoading(false)
+        }
+        return
+      }
+
+      // In demo mode, trust the stored user without calling the API.
+      if (isDemoMode()) {
+        if (active) {
+          setUserState(getStoredUser())
           setIsLoading(false)
         }
         return
