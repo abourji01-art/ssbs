@@ -21,6 +21,8 @@ import type {
   StationCreate,
   StationUpdate,
   Trip,
+  TripCreate,
+  TripUpdate,
   User,
 } from '../types/api'
 
@@ -218,6 +220,20 @@ export async function deleteDriver(driverId: string): Promise<void> {
 export async function getTrips(): Promise<Trip[]> {
   const { data } = await api.get<Trip[]>(API_ENDPOINTS.trips.list)
   return data
+}
+
+export async function createTrip(payload: TripCreate): Promise<Trip> {
+  const { data } = await api.post<Trip>(API_ENDPOINTS.trips.list, payload)
+  return data
+}
+
+export async function updateTrip(tripId: string, payload: TripUpdate): Promise<Trip> {
+  const { data } = await api.patch<Trip>(API_ENDPOINTS.trips.detail(tripId), payload)
+  return data
+}
+
+export async function deleteTrip(tripId: string): Promise<void> {
+  await api.delete(API_ENDPOINTS.trips.detail(tripId))
 }
 
 export async function getAvailableTrips(stationId: string): Promise<Trip[]> {

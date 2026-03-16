@@ -1,9 +1,9 @@
 // @ts-nocheck
-// ── Trip service — CRUD + lifecycle actions ──
+// ── Trip service — CRUD ──
 
 import api from '../lib/axios';
 import { API_ENDPOINTS } from '../config/api.config';
-import type { Trip, TripCreate, TripUpdate, TripStartResponse, TripEndResponse } from '../types/api';
+import type { Trip, TripCreate, TripUpdate } from '../types/api';
 
 export async function getTrips(): Promise<Trip[]> {
   const { data } = await api.get<Trip[]>(API_ENDPOINTS.trips.list);
@@ -27,16 +27,4 @@ export async function updateTrip(id: string, payload: TripUpdate): Promise<Trip>
 
 export async function deleteTrip(id: string): Promise<void> {
   await api.delete(API_ENDPOINTS.trips.detail(id));
-}
-
-// ── Trip lifecycle ──
-
-export async function startTrip(id: string): Promise<TripStartResponse> {
-  const { data } = await api.post<TripStartResponse>(API_ENDPOINTS.trips.start(id));
-  return data;
-}
-
-export async function endTrip(id: string): Promise<TripEndResponse> {
-  const { data } = await api.post<TripEndResponse>(API_ENDPOINTS.trips.end(id));
-  return data;
 }

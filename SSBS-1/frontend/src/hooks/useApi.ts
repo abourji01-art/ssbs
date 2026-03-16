@@ -152,22 +152,6 @@ export function useDeleteTrip() {
   });
 }
 
-export function useStartTrip() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (id: string) => tripService.updateTrip(id, { status: 'STARTED' } as any),
-    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.trips }),
-  });
-}
-
-export function useEndTrip() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (id: string) => tripService.updateTrip(id, { status: 'ENDED' } as any),
-    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.trips }),
-  });
-}
-
 // ═══════════════════════════════════════
 //  Reservations
 // ═══════════════════════════════════════

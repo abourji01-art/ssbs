@@ -84,7 +84,7 @@ const Overview = () => {
     ? reservations.filter((r) => r.trip === nextTrip.id).length
     : 0;
 
-  const seatsLeft = nextTrip ? nextTrip.seats : 0;
+  const seatsLeft = nextTrip ? nextTrip.seats_left : 0;
 
   const ridesThisMonth = reservations.filter((r) => isThisMonth(r.created_at)).length;
 

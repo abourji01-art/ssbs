@@ -61,9 +61,8 @@ export interface Trip {
   bus: string
   driver: string
   departure_datetime: string
-  seats: number
+  seats_left: number
   archived_at: string | null
-  status?: string
   created_at: string
 }
 
@@ -155,8 +154,6 @@ export interface TripCreate {
 }
 
 export type TripUpdate = Partial<TripCreate>
-export type TripStartResponse = Trip
-export type TripEndResponse = Trip
 
 export interface ReservationCreate {
   trip: string
