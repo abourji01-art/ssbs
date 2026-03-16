@@ -73,7 +73,7 @@ const Students = () => {
                 students.map((s) => (
                   <tr key={s.id} style={{ borderBottom: `1px solid ${V.line}` }}>
                     <td style={{ padding: '10px 18px', fontWeight: 600, color: V.ink }}>
-                      {s.login_42}
+                      {s.login_42 || '—'}
                     </td>
                     <td style={{ padding: '10px 18px', color: V.mid }}>
                       {s.email}

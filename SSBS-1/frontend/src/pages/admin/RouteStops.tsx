@@ -84,7 +84,7 @@ const RouteStops = () => {
                     <span style={{ fontSize: 11, color: V.dim }}>No stops assigned</span>
                   ) : (
                     stops.map((rs, i) => (
-                      <span key={rs.station.id} style={{
+                    <span key={`${route.id}-${rs.station.id}`} style={{
                         display: 'inline-flex', alignItems: 'center', gap: 4,
                         fontSize: 11, fontWeight: 500, padding: '4px 10px',
                         borderRadius: 6, background: i === 0 ? V.blueBg : V.pillBg,
