@@ -18,6 +18,31 @@ import {
 } from '../../services/api'
 import type { Trip, TripCreate, TripUpdate } from '../../types/api'
 
+const TESTING_MODE = import.meta.env.VITE_TESTING_MODE === 'true'
+
+type TripStatus = 'scheduled' | 'completed' | 'archived' | 'full'
+
+function getTripStatus(trip: Trip): TripStatus {
+  if (trip.archived_at !== null) return 'archived'
+  if (new Date(trip.departure_datetime) < new Date()) return 'completed'
+  if (trip.seats_left === 0) return 'full'
+  return 'scheduled'
+}
+
+const STATUS_LABELS: Record<TripStatus, string> = {
+  scheduled: 'Scheduled',
+  completed: 'Completed',
+  archived: 'Archived',
+  full: 'Full',
+}
+
+const STATUS_STYLES: Record<TripStatus, { color: string; bg: string; border: string }> = {
+  scheduled: { color: 'var(--fm-blue)', bg: 'var(--fm-blue-bg)', border: 'var(--fm-blue-bdr)' },
+  completed: { color: 'var(--fm-green)', bg: 'var(--fm-green-bg)', border: 'var(--fm-green-bdr)' },
+  archived: { color: 'var(--fm-dim)', bg: 'var(--fm-bg)', border: 'var(--fm-line)' },
+  full: { color: 'var(--fm-amber)', bg: 'var(--fm-amber-bg)', border: 'var(--fm-amber-bdr)' },
+}
+
 const V = {
   white: 'var(--fm-surface)',
   ink: 'var(--fm-ink)',
@@ -67,6 +92,8 @@ export default function Trips() {
   const [editingErrors, setEditingErrors] = useState<Record<string, string>>({})
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; label: string } | null>(null)
   const [isPhone, setIsPhone] = useState(() => window.innerWidth < 760)
+  const [filterStatus, setFilterStatus] = useState<'all' | TripStatus>('all')
+  const [filterRoute, setFilterRoute] = useState<string>('all')
 
   useEffect(() => {
     const handleResize = () => setIsPhone(window.innerWidth < 760)
@@ -83,6 +110,12 @@ export default function Trips() {
   const routes = routesQuery.data ?? []
   const buses = busesQuery.data ?? []
   const drivers = driversQuery.data ?? []
+
+  const filteredTrips = trips.filter((trip) => {
+    if (filterStatus !== 'all' && getTripStatus(trip) !== filterStatus) return false
+    if (filterRoute !== 'all' && trip.route !== filterRoute) return false
+    return true
+  })
 
   const createMutation = useMutation({
     mutationFn: (payload: TripCreate) => createTrip(payload),
@@ -156,6 +189,16 @@ export default function Trips() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {TESTING_MODE && (
+        <div style={{
+          padding: '10px 14px', borderRadius: 8,
+          background: V.amberBg, border: `1px solid ${V.amberBdr}`,
+          color: V.amber, fontSize: 13, fontWeight: 600,
+        }}>
+          ⚠ Testing Mode — trips shown at all hours
+        </div>
+      )}
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
         <div>
           <h2 style={{ fontSize: 20, fontWeight: 700, color: V.ink, margin: 0 }}>Trips</h2>
@@ -163,7 +206,22 @@ export default function Trips() {
             Schedule trips by assigning a route, bus, driver, and departure time.
           </p>
         </div>
-        <span style={{ fontSize: 12, color: V.dim }}>{trips.length} trips</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: 12, color: V.dim }}>{filteredTrips.length} / {trips.length} trips</span>
+          <button
+            onClick={() => void tripsQuery.refetch()}
+            disabled={tripsQuery.isFetching}
+            style={{
+              background: 'transparent', border: `1px solid ${V.line}`,
+              borderRadius: 8, color: V.mid, cursor: tripsQuery.isFetching ? 'wait' : 'pointer',
+              width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 16,
+            }}
+            aria-label="Refresh"
+          >
+            {tripsQuery.isFetching ? '…' : '↻'}
+          </button>
+        </div>
       </div>
 
       {isStaff && (
@@ -255,15 +313,57 @@ export default function Trips() {
         borderRadius: 12,
         overflow: 'hidden',
       }}>
-        {trips.length === 0 ? (
+        {/* Filters row */}
+        <div style={{
+          padding: '12px 16px', borderBottom: `1px solid ${V.line}`,
+          display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center',
+        }}>
+          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+            {(['all', 'scheduled', 'full', 'completed', 'archived'] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => setFilterStatus(s)}
+                style={{
+                  padding: '4px 10px', borderRadius: 6, fontSize: 11, fontWeight: 600,
+                  cursor: 'pointer',
+                  border: filterStatus === s ? `1px solid ${V.blue}` : `1px solid ${V.line}`,
+                  background: filterStatus === s ? V.blueBg : 'transparent',
+                  color: filterStatus === s ? V.blue : V.mid,
+                  textTransform: 'capitalize',
+                }}
+              >
+                {s === 'all' ? 'All' : STATUS_LABELS[s as TripStatus]}
+              </button>
+            ))}
+          </div>
+          <div style={{ height: 14, width: 1, background: V.line, flexShrink: 0 }} />
+          <select
+            value={filterRoute}
+            onChange={(e) => setFilterRoute(e.target.value)}
+            style={{
+              padding: '4px 8px', borderRadius: 6, fontSize: 11, fontWeight: 500,
+              border: `1px solid ${V.line}`, background: V.bg, color: V.mid, cursor: 'pointer',
+            }}
+          >
+            <option value="all">All routes</option>
+            {routes.map((r) => (
+              <option key={r.id} value={r.id}>{r.name}</option>
+            ))}
+          </select>
+        </div>
+        {filteredTrips.length === 0 ? (
           <EmptyState
             icon="🕐"
-            title="No trips yet"
-            subtitle={isStaff ? 'Schedule the first trip above.' : 'Trips will appear here once scheduled.'}
+            title={trips.length === 0 ? 'No trips yet' : 'No trips match filters'}
+            subtitle={
+              trips.length === 0
+                ? (isStaff ? 'Schedule the first trip above.' : 'Trips will appear here once scheduled.')
+                : 'Try changing the status or route filter.'
+            }
           />
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {trips.map((trip) => {
+            {filteredTrips.map((trip) => {
               const isEditing = editingId === trip.id
               const isArchived = trip.archived_at !== null
 
@@ -345,7 +445,7 @@ export default function Trips() {
                             <div style={{ fontSize: 15, fontWeight: 700, color: V.ink }}>
                               {routeName(trip.route)}
                             </div>
-                            {isArchived && <ArchivedBadge />}
+                            <StatusBadge trip={trip} />
                             <SeatsBadge seats={trip.seats_left} />
                           </div>
                           <div style={{ fontSize: 12, color: V.dim, marginTop: 4 }}>
@@ -474,6 +574,19 @@ function toLocalDatetimeInput(iso: string): string {
   const d = new Date(iso)
   const pad = (n: number) => String(n).padStart(2, '0')
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
+function StatusBadge({ trip }: { trip: Trip }) {
+  const s = getTripStatus(trip)
+  const style = STATUS_STYLES[s]
+  return (
+    <span style={{
+      fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 999,
+      color: style.color, background: style.bg, border: `1px solid ${style.border}`,
+    }}>
+      {STATUS_LABELS[s]}
+    </span>
+  )
 }
 
 function SeatsBadge({ seats }: { seats: number }) {

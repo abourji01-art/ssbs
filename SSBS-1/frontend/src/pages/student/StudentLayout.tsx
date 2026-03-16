@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
 import { NavLink, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard, Ticket, ClipboardList, Settings,
@@ -51,7 +50,7 @@ const NAV_ITEMS: Record<string, NavItem[]> = {
   shuttle: [
     { icon: <LayoutDashboard size={ICON_SIZE} />, labelKey: 'dashboard.sidebar.overview', path: '/student/overview' },
     { icon: <Ticket size={ICON_SIZE} />, labelKey: 'dashboard.sidebar.reserve', path: '/student/reserve' },
-    { icon: <ClipboardList size={ICON_SIZE} />, labelKey: 'dashboard.sidebar.history', path: '/student/reservations' },
+    { icon: <ClipboardList size={ICON_SIZE} />, labelKey: 'dashboard.sidebar.history', path: '/student/history' },
   ],
   account: [
     { icon: <Settings size={ICON_SIZE} />, labelKey: 'dashboard.sidebar.settings', path: '/student/settings' },
@@ -62,7 +61,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/student': 'Overview',
   '/student/overview': 'Overview',
   '/student/reserve': 'Reserve a Seat',
-  '/student/reservations': 'My History',
+  '/student/history': 'My History',
   '/student/settings': 'Settings',
 };
 

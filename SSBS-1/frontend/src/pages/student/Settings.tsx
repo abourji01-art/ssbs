@@ -13,7 +13,6 @@ const V = {
 const LANGS = [
   { code: 'en', label: 'English' },
   { code: 'fr', label: 'Français' },
-  { code: 'ar', label: 'العربية' },
 ];
 
 export default function Settings() {
@@ -70,6 +69,11 @@ export default function Settings() {
         <div style={{ fontSize: 13, fontWeight: 600, color: V.ink, marginBottom: 12 }}>
           My Stop
         </div>
+        {user?.station_name && (
+          <div style={{ fontSize: 12, color: V.dim, marginBottom: 10 }}>
+            Current: <span style={{ color: V.ink, fontWeight: 600 }}>{user.station_name}</span>
+          </div>
+        )}
         <StopPicker value={station} onChange={setStation} />
 
         <button

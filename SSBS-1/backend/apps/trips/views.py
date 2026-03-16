@@ -1,3 +1,4 @@
+import os
 from datetime import time, timedelta
 
 from django.db.models import Count, F
@@ -11,6 +12,8 @@ from apps.routes.models import Route
 from apps.trips.models import Trip
 from apps.trips.serializers import TripSerializer
 from apps.users.permissions import IsLogisticsStaff
+
+TESTING_MODE = os.environ.get('TESTING_MODE', 'false').lower() == 'true'
 
 
 class TripListCreateView(generics.ListCreateAPIView):
@@ -36,7 +39,24 @@ class AvailableTripListView(APIView):
 			return Response({'detail': 'station_id is required.'}, status=status.HTTP_400_BAD_REQUEST)
 
 		now_dt = localtime(now())
-		
+
+		if TESTING_MODE:
+			# In testing mode: always return all active trips regardless of current time
+			trips = (
+				Trip.objects.filter(
+					route__route_stations__station_id=station_id,
+					departure_datetime__gte=now_dt,
+					archived_at__isnull=True,
+				)
+				.select_related('route', 'bus')
+				.annotate(reservation_count=Count('reservations'))
+				.filter(reservation_count__lt=F('bus__seat_capacity'))
+				.order_by('departure_datetime')
+			)
+			serializer = TripSerializer(trips, many=True)
+			return Response(serializer.data)
+
+		# Production: respect time windows
 		# 1. Find the earliest future non-archived trip
 		first_trip = Trip.objects.filter(
 			route__route_stations__station_id=station_id,

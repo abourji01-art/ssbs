@@ -58,7 +58,9 @@ export interface Driver {
 export interface Trip {
   id: string
   route: string
+  route_name: string
   bus: string
+  bus_name: string
   driver: string
   departure_datetime: string
   seats_left: number
@@ -69,6 +71,7 @@ export interface Trip {
 export interface Reservation {
   id: string
   trip: string
+  trip_details: Trip | null
   student: string
   created_at: string
 }

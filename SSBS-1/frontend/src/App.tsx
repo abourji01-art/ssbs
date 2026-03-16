@@ -29,7 +29,7 @@ import AdminDrivers      from './pages/admin/Drivers'
 import AdminStudents     from './pages/admin/Students'
 import AdminSettings     from './pages/admin/Settings'
 
-import StudentLayout     from './components/layout/StudentLayout'
+import StudentLayout     from './pages/student/StudentLayout'
 import StudentOverview   from './pages/student/Overview'
 import StudentReserve    from './pages/student/Reserve'
 import StudentHistory    from './pages/student/History'
@@ -62,12 +62,14 @@ export default function App() {
             <Route path="/admin/settings" element={<ProtectedRoute role="LOGISTICS_STAFF"><AdminLayout><AdminSettings /></AdminLayout></ProtectedRoute>} />
 
             {/* Student */}
-            <Route path="/student" element={<ProtectedRoute role="STUDENT"><StudentLayout><Navigate to="overview" replace /></StudentLayout></ProtectedRoute>} />
-            <Route path="/student/overview" element={<ProtectedRoute role="STUDENT"><StudentLayout><StudentOverview /></StudentLayout></ProtectedRoute>} />
-            <Route path="/student/reserve" element={<ProtectedRoute role="STUDENT"><StudentLayout><StudentReserve /></StudentLayout></ProtectedRoute>} />
-            <Route path="/student/history" element={<ProtectedRoute role="STUDENT"><StudentLayout><StudentHistory /></StudentLayout></ProtectedRoute>} />
-            <Route path="/onboarding" element={<ProtectedRoute role="STUDENT"><StudentLayout><StudentOnboarding /></StudentLayout></ProtectedRoute>} />
-            <Route path="/student/settings" element={<ProtectedRoute role="STUDENT"><StudentLayout><StudentSettings /></StudentLayout></ProtectedRoute>} />
+            <Route element={<ProtectedRoute role="STUDENT"><StudentLayout /></ProtectedRoute>}>
+              <Route path="/student" element={<Navigate to="/student/overview" replace />} />
+              <Route path="/student/overview" element={<StudentOverview />} />
+              <Route path="/student/reserve" element={<StudentReserve />} />
+              <Route path="/student/history" element={<StudentHistory />} />
+              <Route path="/student/settings" element={<StudentSettings />} />
+              <Route path="/onboarding" element={<StudentOnboarding />} />
+            </Route>
 
             {/* Driver */}
             <Route path="/driver" element={<ProtectedRoute role="DRIVER"><DriverComingSoon /></ProtectedRoute>} />
