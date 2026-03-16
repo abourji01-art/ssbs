@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { getLoginUrl } from '../services/api';
 import { activateDemo } from '../context/DemoContext';
@@ -28,7 +27,6 @@ interface AuthSectionProps {
 const AuthSection = ({ initialError = null }: AuthSectionProps) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-80px' });
-  const navigate = useNavigate();
   const [loadingRole, setLoadingRole] = useState<'student' | 'staff' | null>(null);
   const [loginError, setLoginError] = useState<string | null>(initialError);
 
@@ -51,8 +49,7 @@ const AuthSection = ({ initialError = null }: AuthSectionProps) => {
 
   const handlePreview = () => {
     activateDemo();
-    navigate('/admin/overview');
-    window.location.reload();
+    window.location.href = '/admin/overview';
   };
 
   return (
